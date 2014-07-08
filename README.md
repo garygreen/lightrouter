@@ -1,7 +1,7 @@
 Lightrouter
 ===========
 
-Ultra lightweight javascript router (less than 300 bytes gzipped), for those that need the most basic simple javascripting routing.
+Ultra lightweight javascript router (less than 300 bytes gzipped), for those that need the most basic simple javascript routing.
 
 ## Usage
 
@@ -9,7 +9,7 @@ Ultra lightweight javascript router (less than 300 bytes gzipped), for those tha
 // Initialise the router
 var router = new LightRouter({
 	routes: {
-		''                        : function() { // Just the root },
+		'^$'                      : function() { // Just the root },
 		'^([#\\?].*)?$'           : function() { // Root with allowed query strings and hashbangs },
 		'test/in-url'             : function() { // In url matched },
 		'^test/absolute-from-root': function() { // Absolute url matched }
