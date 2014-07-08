@@ -1,0 +1,14 @@
+{
+  "name": "lightrouter",
+  "version": "0.0.1",
+  "description": "Lighweight javascript router",
+  "author": "Gary Green",
+  "main": "lightrouter.js",
+  "dependencies": {},
+  "devDependencies": {
+    "gulp": "^3.8.5",
+    "gulp-clean": "^0.3.1",
+    "gulp-concat": "^2.2.0",
+    "gulp-uglify": "^0.3.1"
+  }
+}
