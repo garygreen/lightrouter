@@ -1,6 +1,8 @@
 Lightrouter
 ===========
 
+[![Build Status](https://api.travis-ci.org/garygreen/lightrouter.svg)](https://api.travis-ci.org/garygreen)
+
 Ultra lightweight javascript router for those that need the most basic simple javascript routing.
 
 ## Usage
