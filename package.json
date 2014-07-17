@@ -4,6 +4,9 @@
   "description": "Lighweight javascript router",
   "author": "Gary Green",
   "main": "lightrouter.js",
+  "scripts": {
+    "test": "mocha -b -R tap tests"
+  },
   "dependencies": {},
   "devDependencies": {
     "chai": "^1.9.1",
