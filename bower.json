@@ -1,0 +1,22 @@
+{
+  "name": "lightrouter",
+  "version": "0.0.1",
+  "homepage": "https://github.com/garygreen/lightrouter",
+  "authors": [
+    "Gary Green"
+  ],
+  "description": "Lightweight javascript routing",
+  "main": "dist/lightrouter.js",
+  "keywords": [
+    "javascript",
+    "routing"
+  ],
+  "license": "Apache 2.0",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
