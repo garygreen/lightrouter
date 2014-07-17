@@ -13,7 +13,20 @@
  *  limitations under the License.
  */
 
-(function(window) {
+(function(factory) {
+
+	if (typeof exports !== 'undefined')
+	{
+		module.exports = {
+			LightRouter: factory()
+		};
+	}
+	else
+	{
+		window.LightRouter = factory(window);
+	}
+
+}(function(window) {
 
 	function LightRouter(options)
 	{
@@ -25,30 +38,52 @@
 
 		/**
 		 * Routes
-		 * @type {Object}
+		 * @type array
 		 */
-		this.routes = {};
+		this.routes = [];
+
+		/**
+		 * Custom Url (mainly for testing, etc)
+		 * @type {String}
+		 */
+		this.url = null;
 
 		options = options || {};
 
 		if (options.routes)
 		{
-			this.setRoutes(options.routes);
+			var route;
+			for (route in options.routes)
+			{
+				this.addRoute(route, options.routes[route]);
+			}
 		}
 
 		if (options.rootUrl)
 		{
 			this.setRootUrl(options.rootUrl);
 		}
+
+		if (options.url)
+		{
+			this.setUrl(options.url);
+		}
 	}
 
-	/**
-	 * Set the routes
-	 * @param object routes
-	 * @return self
-	 */
-	LightRouter.prototype.setRoutes = function(routes) {
-		this.routes = routes;
+	function routeToRegex(route)
+	{
+		if (typeof route === 'string')
+		{
+			return new RegExp('^' + route);
+		}
+		return route;
+	}
+
+	LightRouter.prototype.addRoute = function(route, callback) {
+		this.routes.push({
+			route: route,
+			callback: callback
+		});
 		return this;
 	};
 
@@ -63,14 +98,25 @@
 	};
 
 	/**
-	 * Get the url to test against the routes (current window href location minus the rootUrl and query string)
-	 * @return string
+	 * Sets the custom url to test routes against
+	 * @param  string url
+	 * @return self
+	 */
+	LightRouter.prototype.setUrl = function(url) {
+		this.url = url;
+		return this;
+	};
+
+	/**
+	 * Gets the rootless url (custom url or current window href)
+	 * @return self
 	 */
 	LightRouter.prototype.getUrl = function() {
-		var href        = window.location.href.split('?')[0],
-		    rootRegex   = new RegExp('^' + this.rootUrl);
+
+		var url       = this.url || window.location.href.split('?')[0],
+		    rootRegex = new RegExp('^' + this.rootUrl);
 			
-		return href.replace(rootRegex, '');
+		return url.replace(rootRegex, '');
 	};
 
 	/**
@@ -78,17 +124,22 @@
 	 * @return self
 	 */
 	LightRouter.prototype.run = function() {
-		var url = this.getUrl(), route, matched;
+		var url = this.getUrl(), route, i, matched, routeOptions, routeRegex;
 
-		for (route in this.routes)
+		for (i in this.routes)
 		{
-			matched = url.match(route);
+			routeOptions = this.routes[i];
+			routeRegex = routeToRegex(routeOptions.route);
+			matched = url.match(routeRegex);
+
 			if (matched)
 			{
-				this.routes[route]();
+				routeOptions.callback();
 			}
 		}
 		return this;
 	};
 
-})(window);
+	return LightRouter;
+
+}));

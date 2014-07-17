@@ -1,7 +1,7 @@
 Lightrouter
 ===========
 
-Ultra lightweight javascript router (less than 300 bytes gzipped), for those that need the most basic simple javascript routing.
+Ultra lightweight javascript router for those that need the most basic simple javascript routing.
 
 ## Usage
 
@@ -25,8 +25,17 @@ The the routes key is a regex that will be matched against the windows current f
 Available Functions
 ---
 
-### setRoutes([object]routes)
-Set's the routes (see above example)
+### addRoute([string|regex], [function]callFunc)
+Adds a route and calls the function if the routing url matches.
 
 ### setRootUrl([string]url)
 Set's the route url
+
+### setUrl([string]url)
+Set's the url to match routes against (will default to the window.href location)
+
+### getUrl()
+Get's the rootless url to match routes against
+
+### run()
+Checks the routes against the url and calls the associated route function.

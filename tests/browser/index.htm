@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Mocha Tests</title>
+		<link rel="stylesheet" href="mocha.css" />
+		<style type="text/css">
+			div.note {
+				font-size: .8em;
+				width: 50%;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="note">
+			<div id="mocha"></div>
+			<script src="../../src/lightrouter.js"></script>
+			<script src="chai.js" type="text/javascript"></script>
+			<script src="mocha.js"></script>
+			<script>
+				mocha.setup({
+					ui: 'bdd',
+					timeout: 1500
+				});
+			</script>
+
+			<script src="../main.js"></script>
+			<script>
+				mocha.checkLeaks();
+				mocha.run();
+			</script>
+		</div>
+	</body>
+</html>
