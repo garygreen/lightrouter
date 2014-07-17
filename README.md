@@ -9,10 +9,9 @@ Ultra lightweight javascript router (less than 300 bytes gzipped), for those tha
 // Initialise the router
 var router = new LightRouter({
 	routes: {
-		'^$'                      : function() { // Just the root },
-		'^([#\\?].*)?$'           : function() { // Root with allowed query strings and hashbangs },
+		'$'                       : function() { // Just the root },
 		'test/in-url'             : function() { // In url matched },
-		'^test/absolute-from-root': function() { // Absolute url matched }
+		'test/absolute-from-root$': function() { // Absolute url matched }
 	},
 	rootUrl: 'http://localhost/my-app/path'
 });

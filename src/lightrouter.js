@@ -46,12 +46,14 @@ LightRouter.prototype.setRootUrl = function(url) {
 };
 
 /**
- * Get the url to test against the routes (current window href location minus the rootUrl)
+ * Get the url to test against the routes (current window href location minus the rootUrl and query string)
  * @return string
  */
 LightRouter.prototype.getUrl = function() {
-	var	rootRegex = new RegExp('^' + this.rootUrl);
-	return window.location.href.replace(rootRegex, '');
+	var href        = window.location.href.split('?')[0],
+	    rootRegex   = new RegExp('^' + this.rootUrl);
+		
+	return href.replace(rootRegex, '');
 };
 
 /**
@@ -59,12 +61,12 @@ LightRouter.prototype.getUrl = function() {
  * @return self
  */
 LightRouter.prototype.run = function() {
-	var url = this.getUrl(), i, route;
+	var url = this.getUrl(), route, matched;
 
-	for (i in this.routes)
+	for (route in this.routes)
 	{
-		route = this.routes[i];
-		if (url.match(route))
+		matched = url.match(route);
+		if (matched)
 		{
 			this.routes[route]();
 		}
