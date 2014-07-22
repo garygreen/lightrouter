@@ -61,10 +61,11 @@ Routes can be added with the `add()` method
 
 ```javascript
 // Add a custom regex based route:
-router.add(/anywhere-in-url-match/(\w+)/, function(w) { });
+router.add(/anywhere-in-url-match\/(\w+)/, function(w) { });
 
 // Add a regex based string:
 router.add('articles/:id', function(id) { console.log('loading article ' + id); });
+```
 
 Available Functions
 ---
