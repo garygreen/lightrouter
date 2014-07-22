@@ -32,11 +32,11 @@
 					'route1/test': function() { },
 					'route2/test2': function() { }
 				},
-				rootUrl: 'path/to/app'
+				pathRoot: 'path/to/app'
 			});
 
 			assert.lengthOf(router.routes, 2);
-			assert.equal(router.rootUrl, 'path/to/app');
+			assert.equal(router.pathRoot, 'path/to/app');
 
 		});
 
@@ -45,106 +45,115 @@
 
 	describe('function tests', function() {
 
-		it('can getUrl and removes the root', function() {
+		it('can getUrl() and remove the root', function() {
 
 			var router = new lightrouter.LightRouter({
-	 			url: 'http://some-site.dev/my/app/path/test/123',
-	 			rootUrl: 'http://some-site.dev/my/app/path/'
+	 			path: 'my/app/path/test/123',
+	 			pathRoot: 'my/app/path'
 	 		});
 
 	 		assert.equal(router.getUrl(), 'test/123');
 
 		});
 
+		it('can getUrl() a specific routing type', function() {
+
+			var router = new lightrouter.LightRouter({
+				path: 'app/path/test-path',
+				hash: 'test-hash',
+				pathRoot: 'app/path'
+			});
+
+			assert.equal(router.getUrl('path'), 'test-path');
+			assert.equal(router.getUrl('hash'), 'test-hash');
+		});
+
 		it('add manual routes', function(done) {
 
-			var router = new lightrouter.LightRouter({ url: 'test/123' });
+			var router = new lightrouter.LightRouter({ path: 'articles/123' });
 
 			var unmatchCallback = function() {
 				throw('should not have called this.');
 			};
 
-			var matchCallback = function() {
+			var matchCallback = function(id) {
+				assert.equal(id, '123');
 				done();
 			};
 
-			router.addRoute('test/xxx', unmatchCallback);
-			router.addRoute('test/123', matchCallback);
+			router.add('blogs/:id', unmatchCallback);
+			router.add('articles/:id', matchCallback);
 			router.run();
 
 		});
 
-		it('can set a manual url', function() {
+		it('can set a manual path', function() {
 			var router = new lightrouter.LightRouter();
-			router.setUrl('test/blah');
-			assert.equal(router.url, 'test/blah');
+			router.setPath('test/blah');
+			assert.equal(router.path, 'test/blah');
 		});
 
 		it('can set a root url', function() {
 			var router = new lightrouter.LightRouter(),	
-				rootUrl = 'http://localhost/my/app/path';
-			router.setRootUrl(rootUrl);
-			assert.equal(router.rootUrl, rootUrl);
+				pathRoot = 'my/app/path';
+			router.setPathRoot(pathRoot);
+			assert.equal(router.pathRoot, pathRoot);
 		});
 
+		it('can set a hash routing type', function() {
 
+			var router = new lightrouter.LightRouter({
+				hash: 'articles/456'
+			});
+
+			router.setType('hash');
+			assert.equal(router.type, 'hash');
+			assert.equal(router.getUrl(), 'articles/456');
+
+		});
+
+		it('can set a location routing type', function() {
+
+			var router = new lightrouter.LightRouter({
+				path: 'articles/456'
+			});
+
+			router.setType('path');
+			assert.equal(router.type, 'path');
+			assert.equal(router.getUrl(), 'articles/456');
+
+		});
 
 	});
 
 
-	describe('route testing', function() {
+	describe('general route testing', function() {
 
 	 	it('should match index', function(done) {
 
 	 		var router = new lightrouter.LightRouter({
-	 			url: 'http://some-site.dev/my/app/path',
-	 			rootUrl: 'http://some-site.dev/my/app/path',
+	 			path: 'my/app/path',
+	 			pathRoot: 'my/app/path',
 	 			routes: {
-	 				'$': function() {
-	 					done();
-	 				}
+	 				'$': function() { done(); }
 	 			}
 	 		}).run();
 
 	 	});
 
-	 	it('should perform exact matching from of route', function(done) {
+	 	it('should perform exact matching of route', function(done) {
 
 	 		var router = new lightrouter.LightRouter({
-	 			url: 'http://some-site.dev/my/app/path/test-123/blah',
-	 			rootUrl: 'http://some-site.dev/my/app/path/',
+	 			path: 'my/app/path/test-123/blah',
+	 			pathRoot: 'my/app/path',
 	 			routes: {
+	 				'test-123/bla': function() {
+	 					throw('should not have called this');
+	 				},
 	 				'est-123/blah': function() {
 	 					throw('should not have called this');
 	 				},
-	 				'test-123/blah': done
-	 			}
-	 		}).run();
-
-	 	});
-
-	 	it('should match in url, not exact by default', function(done) {
-
-	 		var router = new lightrouter.LightRouter({
-	 			url: 'http://some-site.dev/my/app/path/slug-in-url-test',
-	 			rootUrl: 'http://some-site.dev/my/app/path/',
-	 			routes: {
-	 				'slug-in-url': done
-	 			}
-	 		}).run();
-
-	 	});
-
-	 	it('should support match exact ending', function(done) {
-
-	 		var router = new lightrouter.LightRouter({
-	 			url: 'http://some-site.dev/my/app/path/slug-in-url-test',
-	 			rootUrl: 'http://some-site.dev/my/app/path/',
-	 			routes: {
-	 				'slug-in-url-test$': done,
-	 				'slug-in-url$': function() {
-	 					throw('should not have called this');
-	 				},
+	 				'test-123/blah': function() { done(); }
 	 			}
 	 		}).run();
 
@@ -153,13 +162,13 @@
 	 	it('should be case sensitive by default', function(done) {
 
 	 		var router = new lightrouter.LightRouter({
-	 			url: 'http://some-site.dev/my/app/path/testCAsE/3',
-	 			rootUrl: 'http://some-site.dev/my/app/path/',
+	 			path: 'my/app/path/testCAsE/3',
+	 			pathRoot: 'my/app/path',
 	 			routes: {
 	 				'testcase': function() {
 	 					throw('should not have called this');
 	 				},
-	 				'testCAsE/(\\d+)$': done
+	 				'testCAsE/(\\d+)$': function() { done(); }
 	 			}
 	 		}).run();
 
@@ -168,17 +177,49 @@
 	 	it('should allow adding of manual route regex with case insensitivity', function(done) {
 
 	 		var router = new lightrouter.LightRouter({
-	 			url: 'http://some-site.dev/my/app/path/testCAsE/3',
-	 			rootUrl: 'http://some-site.dev/my/app/path/'
+	 			path: 'my/app/path/testCAsE/3',
+	 			pathRoot: 'my/app/path'
 	 		});
 
 	 		router
-	 			.addRoute(/^testcase/i, done)
-	 			.addRoute(/testcasE/, function() {
+	 			.add(/^testcase/i, function() { done(); })
+	 			.add(/testcasE/, function() {
 	 				throw('should not have called this');
 	 			})
 	 			.run();
 	 	});
+
+	 	it('should match route parameters', function(done) {
+
+	 		var router = new lightrouter.LightRouter({
+	 			pathRoot: 'my/app/path%20test',
+	 			path: 'my/app/path%20test/articles/some%20category%20_785/4463',
+	 			routes: {
+	 				'articles/:category/:id': function(category, id) {
+	 					assert.equal(category, 'some%20category%20_785');
+	 					assert.equal(id, 4463);
+	 					done();
+	 				}
+	 			}
+	 		}).run();
+
+	 	});
+
+	});
+
+	describe('hash route testing specifics', function() {
+
+		it('should not attempt to replace path root url when hash routing', function() {
+
+			var router = new lightrouter.LightRouter({
+				hash: 'articles/123',
+				type: 'hash',
+				pathRoot: 'articles'
+			});
+
+			assert.equal(router.getUrl(), 'articles/123');
+
+		});
 
 	});
 
