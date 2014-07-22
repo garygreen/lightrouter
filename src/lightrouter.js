@@ -101,11 +101,26 @@
 		return route;
 	}
 
+	/**
+	 * Add a route
+	 * @param string|RegExp   route
+	 * @param function        callback
+	 * @return self
+	 */
 	LightRouter.prototype.add = function(route, callback) {
 		this.routes.push({
 			route: route,
 			callback: callback
 		});
+		return this;
+	};
+
+	/**
+	 * Empty/clear all the routes
+	 * @return self
+	 */
+	LightRouter.prototype.empty = function() {
+		this.routes = [];
 		return this;
 	};
 

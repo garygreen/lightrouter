@@ -124,6 +124,21 @@
 
 		});
 
+		it('can empty all the routes', function() {
+
+			var router = new lightrouter.LightRouter({
+				routes: {
+					'test1': function() { },
+					'test2': function() { }
+				}
+			});
+
+			assert.lengthOf(router.routes, 2);
+			router.empty();
+			assert.lengthOf(router.routes, 0);
+
+		});
+
 	});
 
 
@@ -135,7 +150,7 @@
 	 			path: 'my/app/path',
 	 			pathRoot: 'my/app/path',
 	 			routes: {
-	 				'$': function() { done(); }
+	 				'': function() { done(); }
 	 			}
 	 		}).run();
 
@@ -189,7 +204,7 @@
 	 			.run();
 	 	});
 
-	 	it('should match route parameters', function(done) {
+	 	it('should match route parameters simple', function(done) {
 
 	 		var router = new lightrouter.LightRouter({
 	 			pathRoot: 'my/app/path%20test',
@@ -202,6 +217,26 @@
 	 				}
 	 			}
 	 		}).run();
+
+	 	});
+
+	 	it('should match route parameters advanced', function(done) {
+
+	 		var router = new lightrouter.LightRouter({
+	 			pathRoot: 'my/app/path%20test',
+	 			path: 'my/app/path%20test/articles/create'
+	 		});
+	 		router.add(/articles\/(?:create|edit\/(\d+))/, function(id) {
+	 			assert.isUndefined(id);
+	 		})
+	 		.run()
+	 		.empty()
+	 		.setPath('my/app/path%20test/articles/edit/789')
+	 		router.add(/articles\/(?:create|edit\/(\d+))/, function(id) {
+	 			assert.equal(id, 789);
+	 			done();
+	 		})
+	 		.run();
 
 	 	});
 
