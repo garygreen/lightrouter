@@ -31,10 +31,10 @@
 	function LightRouter(options)
 	{
 		/**
-		 * Root url (will be stripped out when testing roots)
-		 * @type {String}
+		 * Path root (will be stripped out when testing path-based routes)
+		 * @type string
 		 */
-		this.rootUrl = '';
+		this.pathRoot = '';
 
 		/**
 		 * Routes
@@ -43,30 +43,52 @@
 		this.routes = [];
 
 		/**
-		 * Custom Url (mainly for testing, etc)
-		 * @type {String}
+		 * Default routing type [hash or path]
+		 * @type string
 		 */
-		this.url = null;
+		this.type = 'path';
+
+		/**
+		 * Custom path (mainly used for testing)
+		 * @type string
+		 */
+		this.path = null;
+
+		/**
+		 * Custom hash (mainly used for testing)
+		 * @type string
+		 */
+		this.hash = null;
 
 		options = options || {};
+
+		if (options.type)
+		{
+			this.setType(options.type);
+		}
+
+		if (options.pathRoot)
+		{
+			this.setPathRoot(options.pathRoot);
+		}
+
+		if (options.path)
+		{
+			this.setPath(options.path);
+		}
+
+		if (options.hash)
+		{
+			this.setHash(options.hash);
+		}
 
 		if (options.routes)
 		{
 			var route;
 			for (route in options.routes)
 			{
-				this.addRoute(route, options.routes[route]);
+				this.add(route, options.routes[route]);
 			}
-		}
-
-		if (options.rootUrl)
-		{
-			this.setRootUrl(options.rootUrl);
-		}
-
-		if (options.url)
-		{
-			this.setUrl(options.url);
 		}
 	}
 
@@ -74,12 +96,18 @@
 	{
 		if (typeof route === 'string')
 		{
-			return new RegExp('^' + route);
+			return new RegExp('^' + route.replace(/\//g, '\\/').replace(/:(\w*)/g, '([^\\\\]*)') + '$');
 		}
 		return route;
 	}
 
-	LightRouter.prototype.addRoute = function(route, callback) {
+	/**
+	 * Add a route
+	 * @param string|RegExp   route
+	 * @param function        callback
+	 * @return self
+	 */
+	LightRouter.prototype.add = function(route, callback) {
 		this.routes.push({
 			route: route,
 			callback: callback
@@ -88,35 +116,78 @@
 	};
 
 	/**
-	 * Set the root url
+	 * Empty/clear all the routes
+	 * @return self
+	 */
+	LightRouter.prototype.empty = function() {
+		this.routes = [];
+		return this;
+	};
+
+	/**
+	 * Set's the routing type
+	 * @param self
+	 */
+	LightRouter.prototype.setType = function(type) {
+		this.type = type;
+		return this;
+	};
+
+	/**
+	 * Set the path root url
 	 * @param string url
 	 * @return self
 	 */
-	LightRouter.prototype.setRootUrl = function(url) {
-		this.rootUrl = url;
+	LightRouter.prototype.setPathRoot = function(url) {
+		this.pathRoot = url;
 		return this;
 	};
 
 	/**
-	 * Sets the custom url to test routes against
-	 * @param  string url
+	 * Sets the custom path to test routes against
+	 * @param  string path
 	 * @return self
 	 */
-	LightRouter.prototype.setUrl = function(url) {
-		this.url = url;
+	LightRouter.prototype.setPath = function(path) {
+		this.path = path;
 		return this;
 	};
 
 	/**
-	 * Gets the rootless url (custom url or current window href)
+	 * Sets the custom hash to test routes against
+	 * @param  string hash
 	 * @return self
 	 */
-	LightRouter.prototype.getUrl = function() {
+	LightRouter.prototype.setHash = function(hash) {
+		this.hash = hash;
+		return this;
+	};
 
-		var url       = this.url || window.location.href.split('?')[0],
-		    rootRegex = new RegExp('^' + this.rootUrl);
+	/**
+	 * Gets the url to test the routes against
+	 * @return self
+	 */
+	LightRouter.prototype.getUrl = function(routeType) {
+
+		var url;
+
+		if (routeType === undefined)
+		{
+			routeType = this.type;
+		}
+
+		if (routeType == 'path')
+		{
+			var rootRegex = new RegExp('^' + this.pathRoot + '/?');
+			url = this.path || window.location.pathname.substring(1);
+			url = url.replace(rootRegex, '');
+		}
+		else if (routeType == 'hash')
+		{
+			url = this.hash || window.location.hash.substring(1);
+		}
 			
-		return url.replace(rootRegex, '');
+		return url;
 	};
 
 	/**
@@ -134,7 +205,7 @@
 
 			if (matched)
 			{
-				routeOptions.callback();
+				routeOptions.callback.apply(undefined, matched.slice(1));
 			}
 		}
 		return this;
