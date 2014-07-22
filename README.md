@@ -24,8 +24,6 @@ var router = new LightRouter({
 router.run();
 ```
 
-The routes key is a regex that will be matched against the windows current full url (without the rootUrl). If the route matches, the function will be called.
-
 Examples
 ---
 
