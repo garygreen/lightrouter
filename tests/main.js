@@ -11,9 +11,7 @@
 	{
 		// Browser testing support
 		assert      = window.chai.assert;
-		lightrouter = {
-			LightRouter: window.LightRouter
-		};
+		Lightrouter = window.LightRouter;
 	}
 
 
