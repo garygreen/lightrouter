@@ -40,6 +40,13 @@
 
 		});
 
+		it('should default to path based routing', function() {
+
+			var router = new lightrouter.LightRouter();
+			assert(router.type, 'path');
+
+		});
+
 	});
 
 
@@ -67,6 +74,17 @@
 			assert.equal(router.getUrl('path'), 'test-path');
 			assert.equal(router.getUrl('hash'), 'test-hash');
 		});
+
+		it('getUrl() should decode the url', function() {
+
+			var router = new lightrouter.LightRouter({
+	 			pathRoot: 'my/app/path%20test',
+	 			path: 'my/app/path%20test/articles/some%20category%20name/email@address.com'
+	 		});
+
+	 		assert(router.getUrl(), 'my/app/path test/articles/some category name/email@address.com');
+
+	 	});
 
 		it('add manual routes', function(done) {
 
@@ -204,14 +222,33 @@
 	 			.run();
 	 	});
 
-	 	it('should match route parameters simple', function(done) {
+	 });
+
+	describe('route parameters', function() {
+
+		it('should match alpha, digit, underscore or dash for named parameters by default', function(done) {
 
 	 		var router = new lightrouter.LightRouter({
-	 			pathRoot: 'my/app/path%20test',
-	 			path: 'my/app/path%20test/articles/some%20category%20_785/4463',
+	 			path: 'articles/some-Named-slug-23_2011!apple',
+	 			routes: {
+	 				'articles/:slug!:fruit': function(slug, fruit) {
+	 					assert.equal(slug, 'some-Named-slug-23_2011');
+	 					assert.equal(fruit, 'apple');
+	 					done();
+	 				}
+	 			}
+	 		}).run();
+
+	 	});
+
+	 	it('should match path seperated route parameters', function(done) {
+
+	 		var router = new lightrouter.LightRouter({
+	 			pathRoot: 'my/app/path-test',
+	 			path: 'my/app/path-test/articles/some-category_NAME/4463',
 	 			routes: {
 	 				'articles/:category/:id': function(category, id) {
-	 					assert.equal(category, 'some%20category%20_785');
+	 					assert.equal(category, 'some-category_NAME');
 	 					assert.equal(id, 4463);
 	 					done();
 	 				}
@@ -220,7 +257,7 @@
 
 	 	});
 
-	 	it('should match route parameters advanced', function(done) {
+	 	it('should match route manually added regex route', function(done) {
 
 	 		var router = new lightrouter.LightRouter({
 	 			pathRoot: 'my/app/path%20test',
