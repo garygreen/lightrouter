@@ -15,7 +15,7 @@ var router = new LightRouter({
 		'':             function()   { console.log('the base url'); },
 		'articles':     function()   { console.log('loading articles'); },
 		'articles/:id': function(id) { console.log('showing article: ' + id); }
-		'articles/(create|update)': function() { console.log('create or update article'); }
+		'articles/(create|:id/edit)': function(id) { console.log('create or edit article'); }
 	},
 	pathRoot: 'my-app/path'
 });
