@@ -17,9 +17,7 @@
 
 	if (typeof exports !== 'undefined')
 	{
-		module.exports = {
-			LightRouter: factory()
-		};
+		module.exports = factory();
 	}
 	else
 	{
