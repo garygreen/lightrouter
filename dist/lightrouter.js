@@ -17,9 +17,7 @@
 
 	if (typeof exports !== 'undefined')
 	{
-		module.exports = {
-			LightRouter: factory()
-		};
+		module.exports = factory();
 	}
 	else
 	{
@@ -67,7 +65,7 @@
 		var namedParam = '([\\w-]+)';
 		this.namedParam = {
 			replace: new RegExp(':' + namedParam, 'g'),
-			match: namedParam,
+			match: namedParam
 		};
 
 		options = options || {};
