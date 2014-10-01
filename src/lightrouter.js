@@ -64,8 +64,8 @@
 		 */
 		var namedParam = '([\\w-]+)';
 		this.namedParam = {
-			replace: new RegExp(':' + namedParam, 'g'),
-			match: namedParam
+			match: new RegExp('{(' + namedParam + ')}', 'g'),
+			replace: namedParam
 		};
 
 		options = options || {};
@@ -94,10 +94,10 @@
 		 * @return self
 		 */
 		add: function(route, callback) {
-			this.routes.push({
+			this.routes.push(new Route({
 				route: route,
 				callback: callback
-			});
+			}, this));
 			return this;
 		},
 
@@ -151,30 +151,13 @@
 		},
 
 		/**
-		 * Converts the given route string to a regex, suitable for matching against.
-		 * @param  string route
-		 * @return RegExp
-		 */
-		regexRoute: function(route) {
-			if (typeof route === 'string')
-			{
-				return new RegExp('^' + route.replace(/\//g, '\\/').replace(this.namedParam.replace, this.namedParam.match) + '$');
-			}
-			return route;
-		},
-
-		/**
 		 * Gets the url to test the routes against
 		 * @return self
 		 */
 		getUrl: function(routeType) {
 
 			var url;
-
-			if (routeType === undefined)
-			{
-				routeType = this.type;
-			}
+			routeType = routeType || this.type;
 
 			if (routeType == 'path')
 			{
@@ -195,20 +178,95 @@
 		 * @return self
 		 */
 		run: function() {
-			var url = this.getUrl(), i, matched, routeOptions, routeRegex;
+			var url = this.getUrl(), route;
 
-			for (i in this.routes)
+			for (var i in this.routes)
 			{
-				routeOptions = this.routes[i];
-				routeRegex = this.regexRoute(routeOptions.route);
-				matched = url.match(routeRegex);
+				// Get the route
+				route = this.routes[i];
 
-				if (matched)
-				{
-					routeOptions.callback.apply(undefined, matched.slice(1));
-				}
+				// Test and run the route if it matches
+				route.test(url) && route.run();
 			}
 			return this;
+		}
+	};
+
+
+	/**
+	 * Route object
+	 * @param {object} options      Options passed to the route
+	 * @param {LightRouter} router  Instance of the light router the route belongs to.
+	 */
+	function Route(options, router)
+	{
+		this.options = options;
+		this.router = router;
+		this.values = [];
+	}
+
+	Route.prototype = {
+
+		/**
+		 * Converts route to a regex (if required) so that it's suitable for matching against.
+		 * @param  string route
+		 * @return RegExp
+		 */
+		regex: function() {
+
+			var route = this.options.route;
+
+			if (typeof route === 'string')
+			{
+				return new RegExp('^' + route.replace(/\//g, '\\/').replace(this.router.namedParam.match, this.router.namedParam.replace) + '$');
+			}
+			return route;
+		},
+
+		/**
+		 * Get the matching param keys
+		 * @return object  Object keyed with param name (or index) with the value.
+		 */
+		params: function() {
+
+			var obj = {}, name, values = this.values, params = values, i, t = 0, route = this.options.route;
+
+			if (typeof route === 'string')
+			{
+				t = 1
+				params = route.match(this.router.namedParam.match)
+			}
+			
+			for (i in params)
+			{
+				name = t ? params[i].replace(this.router.namedParam.match, '$1') : i;
+				obj[name] = values[i];
+			}
+
+			return obj;
+		},
+
+		/**
+		 * Test the route to see if it matches
+		 * @param  {string} url Url to match against
+		 * @return {boolean}
+		 */
+		test: function(url) {
+			var matches;
+			if (matches = url.match(this.regex()))
+			{
+				this.values = matches.slice(1);
+				return true;
+			}
+			return false;
+		},
+
+		/**
+		 * Run the route callback with the matched params
+		 * @return {mixed}
+		 */
+		run: function() {
+			return this.options.callback.apply(undefined, [this.params()]);
 		}
 	};
 
