@@ -14,8 +14,8 @@ var router = new LightRouter({
 	routes: {
 		'':             function()   { console.log('the base url'); },
 		'articles':     function()   { console.log('loading articles'); },
-		'articles/:id': function(id) { console.log('showing article: ' + id); }
-		'articles/(create|:id/edit)': function(id) { console.log('create or edit article'); }
+		'articles/{id}': function(params) { console.log('showing article: ' + params.id); }
+		'articles/(?:create|{id}/edit)': function(params) { console.log('create or edit article', params.id); }
 	},
 	pathRoot: 'my-app/path'
 });
@@ -59,10 +59,10 @@ Routes can be added with the `add()` method
 
 ```javascript
 // Add a custom regex based route:
-router.add(/anywhere-in-url-match\/(\w+)/, function(w) { });
+router.add(/anywhere-in-url-match\/(\w+)/, function(params) { });
 
 // Add a regex based string:
-router.add('articles/:id', function(id) { console.log('loading article ' + id); });
+router.add('articles/{id}', function(params) { console.log('loading article ' + params.id); });
 ```
 
 Available Functions

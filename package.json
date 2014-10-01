@@ -1,6 +1,6 @@
 {
   "name": "lightrouter",
-  "version": "0.0.1",
+  "version": "0.2.1",
   "description": "Lighweight javascript router",
   "author": "Gary Green",
   "main": "lightrouter.js",
