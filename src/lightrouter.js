@@ -233,8 +233,8 @@
 
 			if (typeof route === 'string')
 			{
-				t = 1
-				params = route.match(this.router.namedParam.match)
+				t = 1;
+				params = route.match(this.router.namedParam.match);
 			}
 			
 			for (i in params)
