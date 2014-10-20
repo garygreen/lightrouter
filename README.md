@@ -9,14 +9,15 @@ Ultra lightweight javascript router for those that need the most basic simple ja
 ```javascript
 // Initialise the router
 var router = new LightRouter({
-	type: 'path', // Default
-	routes: {
-		'':                              function() { console.log('the base url'); },
-		'articles':                      function() { console.log('loading articles'); },
-		'articles/{id}':                 function(params) { console.log('showing article: ', params.id); }
-		'articles/(?:create|{id}/edit)': function(params) { console.log('create or edit article', params.id); }
-	},
-	pathRoot: 'my-app/path'
+  type: 'path',             // Default routing type
+  pathRoot: 'my-app/path',  // Base path for your app
+  routes: {
+     '':                           function() { /* Base url */ },
+     'users':                      function() { /* Users Index */ },
+     'users/{id}':                 function(params) { /* User: params.id */ },
+     'users/(.*)':                 function(params) { /* User: params[0] */ },
+     'users/(?:create|{id}/edit)': function(params) { /* Create/Edit User: params.id */ }
+  }
 });
 
 // Run the router
@@ -27,7 +28,7 @@ router.run();
 
 * Super fast, regexes and objects are only initialized when they need to be.
 * Predictable and easy regex-based, no new syntax to learn.
-* Most routers use `:param` style syntax which interfers with regexes non-consuming match `(?:`
+* Most routers use `:param` style syntax which interferes with regexes non-consuming match `(?:`
 * Node support
 * Support for matching from a base path (see `pathRoot`).
 * Traditional URL matching and support for hash based routing for single page apps.
