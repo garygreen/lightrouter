@@ -180,7 +180,7 @@
 		run: function() {
 			var url = this.getUrl(), route;
 
-			for (var i in this.routes)
+			for (var i = 0, len = this.routes.length; i < len; i++)
 			{
 				// Get the route
 				route = this.routes[i];
@@ -236,11 +236,14 @@
 				t = 1;
 				params = route.match(this.router.namedParam.match);
 			}
-			
-			for (i in params)
+
+			if (params)
 			{
-				name = t ? params[i].replace(this.router.namedParam.match, '$1') : i;
-				obj[name] = values[i];
+				for (var i = 0, len = params.length; i < len; i++)
+				{
+					name = t ? params[i].replace(this.router.namedParam.match, '$1') : i;
+					obj[name] = values[i];
+				}
 			}
 
 			return obj;
