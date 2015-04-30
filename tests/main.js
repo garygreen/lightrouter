@@ -1,17 +1,17 @@
 (function() {
 
-	var assert, Lightrouter;
+	var assert, LightRouter;
 
 	if (typeof require !== 'undefined')
 	{
 		assert      = require('chai').assert,
-		Lightrouter = require('../src/lightrouter.js');
+		LightRouter = require('../src/LightRouter.js');
 	}
 	else
 	{
 		// Browser testing support
 		assert      = window.chai.assert;
-		Lightrouter = window.LightRouter;
+		LightRouter = window.LightRouter;
 	}
 
 
@@ -19,14 +19,14 @@
 
 		it('should be able to initialise the router', function() {
 
-			var router = new Lightrouter();
+			var router = new LightRouter();
 
 		});
 
 
 		it('should be able to initialise routes and root url', function() {
 
-			var router = new Lightrouter({
+			var router = new LightRouter({
 				routes: {
 					'route1/test': function() { },
 					'route2/test2': function() { }
@@ -42,7 +42,7 @@
 
 		it('should default to path based routing', function() {
 
-			var router = new Lightrouter();
+			var router = new LightRouter();
 			assert(router.type, 'path');
 
 		});
@@ -54,7 +54,7 @@
 
 		it('can getUrl() and remove the root', function() {
 
-			var router = new Lightrouter({
+			var router = new LightRouter({
 	 			path: 'my/app/path/test/123',
 	 			pathRoot: 'my/app/path'
 	 		});
@@ -66,7 +66,7 @@
 
 		it('can getUrl() a specific routing type', function() {
 
-			var router = new Lightrouter({
+			var router = new LightRouter({
 				path: 'app/path/test-path',
 				hash: 'test-hash',
 				pathRoot: 'app/path'
@@ -79,7 +79,7 @@
 
 		it('getUrl() should decode the url', function() {
 
-			var router = new Lightrouter({
+			var router = new LightRouter({
 	 			pathRoot: 'my/app/path%20test',
 	 			path: 'my/app/path%20test/articles/some%20category%20name/email@address.com'
 	 		});
@@ -91,7 +91,7 @@
 
 		it('add manual routes', function(done) {
 
-			var router = new Lightrouter({ path: 'articles/123' });
+			var router = new LightRouter({ path: 'articles/123' });
 
 			var unmatchCallback = function() {
 				throw('should not have called this.');
@@ -110,14 +110,14 @@
 
 
 		it('can set a manual path', function() {
-			var router = new Lightrouter();
+			var router = new LightRouter();
 			assert.equal(router.setPath('test/blah'), router);
 			assert.equal(router.path, 'test/blah');
 		});
 
 
 		it('can set a root url', function() {
-			var router = new Lightrouter(),	
+			var router = new LightRouter(),	
 				pathRoot = 'my/app/path';
 			assert.equal(router.setPathRoot(pathRoot), router);
 			assert.equal(router.pathRoot, pathRoot);
@@ -126,7 +126,7 @@
 
 		it('can set a hash routing type', function() {
 
-			var router = new Lightrouter({
+			var router = new LightRouter({
 				hash: 'articles/456'
 			});
 
@@ -139,7 +139,7 @@
 
 		it('can set a location routing type', function() {
 
-			var router = new Lightrouter({
+			var router = new LightRouter({
 				path: 'articles/456'
 			});
 
@@ -152,7 +152,7 @@
 
 		it('can empty all the routes', function() {
 
-			var router = new Lightrouter({
+			var router = new LightRouter({
 				routes: {
 					'test1': function() { },
 					'test2': function() { }
@@ -171,12 +171,12 @@
 
 	describe('context on route', function() {
 
-		it('defaults to lightrouter as context', function() {
+		it('defaults to LightRouter as context', function() {
 
-			var router = new Lightrouter({
+			var router = new LightRouter({
 				path: 'test',
 				routes: {
-					'test': function() { assert.instanceOf(this, Lightrouter); }
+					'test': function() { assert.instanceOf(this, LightRouter); }
 				}
 			}).run();
 
@@ -185,7 +185,41 @@
 
 		it('can supply a context when running route', function(done) {
 
-			var router = new Lightrouter({
+			var router = new LightRouter({
+				context: { success: done },
+				path: 'test',
+				routes: {
+					'test': function() { this.success(); }
+				}
+			}).run();
+
+		});
+
+	});
+
+
+	describe('route handler', function() {
+
+		it('supports string based handler with objects', function() {
+
+			var handler = {
+				editUser: function(params) { assert.equal(params.id, 5) }
+			};
+
+			var router1 = new LightRouter({
+				path: 'users/5/edit',
+				handler: handler,
+				routes: {
+					'users/{id}/edit': 'editUser'
+				}
+			}).run();
+
+		});
+
+
+		it('can supply a context when running route', function(done) {
+
+			var router = new LightRouter({
 				context: { success: done },
 				path: 'test',
 				routes: {
@@ -203,7 +237,7 @@
 
 	 	it('should match index', function(done) {
 
-	 		var router = new Lightrouter({
+	 		var router = new LightRouter({
 	 			path: 'my/app/path',
 	 			pathRoot: 'my/app/path',
 	 			routes: {
@@ -216,7 +250,7 @@
 
 	 	it('should perform exact matching of route', function(done) {
 
-	 		var router = new Lightrouter({
+	 		var router = new LightRouter({
 	 			path: 'my/app/path/test-123/blah',
 	 			pathRoot: 'my/app/path',
 	 			routes: {
@@ -235,7 +269,7 @@
 
 	 	it('should be case sensitive by default', function(done) {
 
-	 		var router = new Lightrouter({
+	 		var router = new LightRouter({
 	 			path: 'my/app/path/testCAsE/3',
 	 			pathRoot: 'my/app/path',
 	 			routes: {
@@ -251,7 +285,7 @@
 
 	 	it('should allow adding of manual route regex with case insensitivity', function(done) {
 
-	 		var router = new Lightrouter({
+	 		var router = new LightRouter({
 	 			path: 'my/app/path/testCAsE/3',
 	 			pathRoot: 'my/app/path'
 	 		});
@@ -271,7 +305,7 @@
 
 		it('should match alpha, digit, underscore or dash for named parameters by default', function(done) {
 
-	 		var router = new Lightrouter({
+	 		var router = new LightRouter({
 	 			path: 'articles/some-Named-slug-23_2011!apple',
 	 			routes: {
 	 				'articles/{slug}!{fruit}': function(params) {
@@ -287,7 +321,7 @@
 
 	 	it('should match path seperated route parameters', function(done) {
 
-	 		var router = new Lightrouter({
+	 		var router = new LightRouter({
 	 			pathRoot: 'my/app/path-test',
 	 			path: 'my/app/path-test/articles/some-category_NAME/4463',
 	 			routes: {
@@ -304,7 +338,7 @@
 
 	 	it('should match in brackets', function(done) {
 
-	 		var router = new Lightrouter({
+	 		var router = new LightRouter({
 	 			pathRoot: 'my/app/path-test',
 	 			path: 'my/app/path-test/articles/56/edit',
 	 			routes: {
@@ -319,7 +353,7 @@
 
 	 	it('should match route added with no params with empty object', function(done) {
 
-	 		var router = new Lightrouter({
+	 		var router = new LightRouter({
 	 			pathRoot: 'my/app/path%20test',
 	 			path: 'my/app/path%20test/articles/create',
 	 			routes: {
@@ -335,7 +369,7 @@
 
 	 	it('should match route manually added with no params with empty object', function(done) {
 
-	 		var router = new Lightrouter({
+	 		var router = new LightRouter({
 	 			pathRoot: 'my/app/path%20test',
 	 			path: 'my/app/path%20test/articles/create'
 	 		});
@@ -351,7 +385,7 @@
 
 	 	it('should match route manually added regex with params', function(done) {
 			
-	 		var router = new Lightrouter({
+	 		var router = new LightRouter({
 				pathRoot: 'my/app/path%20test',
 		 		path: 'my/app/path%20test/articles/edit/789/900'
 		 	})
@@ -369,7 +403,7 @@
 	 	it('stops when it matches first route', function() {
 
 	 		var matched = 0;
-	 		var router = new Lightrouter({
+	 		var router = new LightRouter({
 	 			path: 'ab',
 	 			routes: {
 	 				'a.': function() { matched++; },
@@ -383,8 +417,7 @@
 
 	 	it('passes matched route on run', function() {
 
-	 		var matched = 0;
-	 		var router = new Lightrouter({
+	 		var router = new LightRouter({
 	 			path: 'test1',
 	 			routes: {
 	 				'test0': function() { },
@@ -402,7 +435,7 @@
 
 		it('should not attempt to replace path root url when hash routing', function() {
 
-			var router = new Lightrouter({
+			var router = new LightRouter({
 				hash: 'articles/123',
 				type: 'hash',
 				pathRoot: 'articles'

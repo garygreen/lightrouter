@@ -65,6 +65,12 @@
 		this.context = this;
 
 		/**
+		 * Handler for string based callbacks
+		 * @type {object|function}
+		 */
+		this.handler = window;
+
+		/**
 		 * Named param replace and matching regex
 		 * @type {Object}
 		 */
@@ -81,6 +87,7 @@
 		if (options.pathRoot)  this.setPathRoot(options.pathRoot);
 		if (options.hash)      this.setHash(options.hash);
 		if (options.context)   this.setContext(options.context);
+		if (options.handler)   this.setHandler(options.handler);
 
 		if (options.routes)
 		{
@@ -103,7 +110,7 @@
 		/**
 		 * Add a route
 		 * @param string|RegExp   route
-		 * @param function        callback
+		 * @param string|function callback
 		 * @return self
 		 */
 		add: function(route, callback) {
@@ -170,6 +177,16 @@
 		 */
 		setContext: function(context) {
 			this.context = context;
+			return this;
+		},
+
+		/**
+		 * Set handler
+		 * @param  mixed context
+		 * @return self
+		 */
+		setHandler: function(handler) {
+			this.handler = handler;
 			return this;
 		},
 
@@ -292,6 +309,10 @@
 		 * @return {mixed}
 		 */
 		run: function() {
+			if (typeof this.options.callback === 'string')
+			{
+				return this.router.handler[this.options.callback](this.params());
+			}
 			return this.options.callback.apply(this.router.context, [this.params()]);
 		}
 	};
