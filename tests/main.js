@@ -5,7 +5,7 @@
 	if (typeof require !== 'undefined')
 	{
 		assert      = require('chai').assert,
-		LightRouter = require('../src/LightRouter.js');
+		LightRouter = require('../src/lightrouter.js');
 	}
 	else
 	{
