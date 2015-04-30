@@ -365,6 +365,21 @@
 		 	.run();
 	 	});
 
+
+	 	it('stops when it matches first route', function() {
+
+	 		var matched = 0;
+	 		var router = new Lightrouter({
+	 			path: 'ab',
+	 			routes: {
+	 				'a.': function() { matched++; },
+	 				'ab': function() { matched++; }
+	 			}
+	 		}).run();
+	 		
+	 		assert.equal(matched, 1);
+	 	});
+
 	});
 
 	describe('hash route testing specifics', function() {

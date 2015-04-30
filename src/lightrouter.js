@@ -203,7 +203,11 @@
 				route = this.routes[i];
 
 				// Test and run the route if it matches
-				route.test(url) && route.run();
+				if (route.test(url))
+				{
+					route.run();
+					break;
+				}
 			}
 			return this;
 		}
