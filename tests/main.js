@@ -376,8 +376,24 @@
 	 				'ab': function() { matched++; }
 	 			}
 	 		}).run();
-	 		
+
 	 		assert.equal(matched, 1);
+	 	});
+
+
+	 	it('passes matched route on run', function() {
+
+	 		var matched = 0;
+	 		var router = new Lightrouter({
+	 			path: 'test1',
+	 			routes: {
+	 				'test0': function() { },
+	 				'test1': function() { }
+	 			}
+	 		});
+	 		
+	 		var matchedRoute = router.run();
+	 		assert.instanceOf(matchedRoute, router.Route);
 	 	});
 
 	});

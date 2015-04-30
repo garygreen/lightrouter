@@ -95,13 +95,19 @@
 	LightRouter.prototype = {
 
 		/**
+		 * Route constructor
+		 * @type {Route}
+		 */
+		Route: Route,
+
+		/**
 		 * Add a route
 		 * @param string|RegExp   route
 		 * @param function        callback
 		 * @return self
 		 */
 		add: function(route, callback) {
-			this.routes.push(new Route({
+			this.routes.push(new this.Route({
 				route: route,
 				callback: callback
 			}, this));
@@ -192,7 +198,7 @@
 
 		/**
 		 * Run the router
-		 * @return self
+		 * @return Route|undefined
 		 */
 		run: function() {
 			var url = this.getUrl(), route;
@@ -206,10 +212,9 @@
 				if (route.test(url))
 				{
 					route.run();
-					break;
+					return route;
 				}
 			}
-			return this;
 		}
 	};
 
