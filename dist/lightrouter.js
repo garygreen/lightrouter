@@ -59,6 +59,18 @@
 		this.hash = null;
 
 		/**
+		 * Context to call matched routes under
+		 * @type {mixed}
+		 */
+		this.context = this;
+
+		/**
+		 * Handler for string based callbacks
+		 * @type {object|function}
+		 */
+		this.handler = window;
+
+		/**
 		 * Named param replace and matching regex
 		 * @type {Object}
 		 */
@@ -74,6 +86,8 @@
 		if (options.path)      this.setPath(options.path);
 		if (options.pathRoot)  this.setPathRoot(options.pathRoot);
 		if (options.hash)      this.setHash(options.hash);
+		if (options.context)   this.setContext(options.context);
+		if (options.handler)   this.setHandler(options.handler);
 
 		if (options.routes)
 		{
@@ -88,13 +102,19 @@
 	LightRouter.prototype = {
 
 		/**
+		 * Route constructor
+		 * @type {Route}
+		 */
+		Route: Route,
+
+		/**
 		 * Add a route
 		 * @param string|RegExp   route
-		 * @param function        callback
+		 * @param string|function callback
 		 * @return self
 		 */
 		add: function(route, callback) {
-			this.routes.push(new Route({
+			this.routes.push(new this.Route({
 				route: route,
 				callback: callback
 			}, this));
@@ -151,6 +171,26 @@
 		},
 
 		/**
+		 * Sets context to call matched routes under
+		 * @param  mixed context
+		 * @return self
+		 */
+		setContext: function(context) {
+			this.context = context;
+			return this;
+		},
+
+		/**
+		 * Set handler
+		 * @param  mixed context
+		 * @return self
+		 */
+		setHandler: function(handler) {
+			this.handler = handler;
+			return this;
+		},
+
+		/**
 		 * Gets the url to test the routes against
 		 * @return self
 		 */
@@ -175,7 +215,7 @@
 
 		/**
 		 * Run the router
-		 * @return self
+		 * @return Route|undefined
 		 */
 		run: function() {
 			var url = this.getUrl(), route;
@@ -186,9 +226,12 @@
 				route = this.routes[i];
 
 				// Test and run the route if it matches
-				route.test(url) && route.run();
+				if (route.test(url))
+				{
+					route.run();
+					return route;
+				}
 			}
-			return this;
 		}
 	};
 
@@ -266,7 +309,11 @@
 		 * @return {mixed}
 		 */
 		run: function() {
-			return this.options.callback.apply(undefined, [this.params()]);
+			if (typeof this.options.callback === 'string')
+			{
+				return this.router.handler[this.options.callback](this.params());
+			}
+			return this.options.callback.apply(this.router.context, [this.params()]);
 		}
 	};
 
