@@ -59,6 +59,12 @@
 		this.hash = null;
 
 		/**
+		 * Context to call matched routes under
+		 * @type {mixed}
+		 */
+		this.context = this;
+
+		/**
 		 * Named param replace and matching regex
 		 * @type {Object}
 		 */
@@ -74,6 +80,7 @@
 		if (options.path)      this.setPath(options.path);
 		if (options.pathRoot)  this.setPathRoot(options.pathRoot);
 		if (options.hash)      this.setHash(options.hash);
+		if (options.context)   this.setContext(options.context);
 
 		if (options.routes)
 		{
@@ -147,6 +154,16 @@
 		 */
 		setHash: function(hash) {
 			this.hash = hash;
+			return this;
+		},
+
+		/**
+		 * Sets context to call matched routes under
+		 * @param  mixed context
+		 * @return self
+		 */
+		setContext: function(context) {
+			this.context = context;
 			return this;
 		},
 
@@ -266,7 +283,7 @@
 		 * @return {mixed}
 		 */
 		run: function() {
-			return this.options.callback.apply(undefined, [this.params()]);
+			return this.options.callback.apply(this.router.context, [this.params()]);
 		}
 	};
 

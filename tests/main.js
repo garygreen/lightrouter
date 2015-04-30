@@ -1,6 +1,6 @@
 (function() {
 
-	var assert, lightrouter;
+	var assert, Lightrouter;
 
 	if (typeof require !== 'undefined')
 	{
@@ -162,6 +162,36 @@
 			assert.lengthOf(router.routes, 2);
 			assert(router.empty(), router);
 			assert.lengthOf(router.routes, 0);
+
+		});
+
+
+	});
+
+
+	describe('context on route', function() {
+
+		it('defaults to lightrouter as context', function() {
+
+			var router = new Lightrouter({
+				path: 'test',
+				routes: {
+					'test': function() { assert.instanceOf(this, Lightrouter); }
+				}
+			}).run();
+
+		});
+
+
+		it('can supply a context when running route', function(done) {
+
+			var router = new Lightrouter({
+				context: { success: done },
+				path: 'test',
+				routes: {
+					'test': function() { this.success(); }
+				}
+			}).run();
 
 		});
 
