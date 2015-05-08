@@ -298,6 +298,29 @@
 	 			.run();
 	 	});
 
+
+	 	it('should allow manually matching a route', function() {
+
+	 		var router = new LightRouter({
+	 			path: 'admin/users/12'
+	 		});
+
+	 		var matched = 0;
+
+	 		router.match('admin/users/{id}', function(params) {
+	 			assert.equal(params.id, 12);
+	 			matched++;
+	 		});
+
+	 		router.match('admin/.*', function() { matched++; });
+
+	 		router.match('test', function() {
+	 			matched++;
+	 		});
+
+	 		assert.equal(matched, 2);
+	 	});
+
 	 });
 
 

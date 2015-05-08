@@ -114,10 +114,7 @@
 		 * @return self
 		 */
 		add: function(route, callback) {
-			this.routes.push(new this.Route({
-				route: route,
-				callback: callback
-			}, this));
+			this.routes.push(new this.Route(route, callback, this));
 			return this;
 		},
 
@@ -214,6 +211,21 @@
 		},
 
 		/**
+		 * Attempt to match a one-time route and callback
+		 *
+		 * @param  {string} path
+		 * @param  {closure|string} callback
+		 * @return {mixed}
+		 */
+		match: function(path, callback) {
+			var route = new this.Route(path, callback, this);
+			if (route.test(this.getUrl()))
+			{
+				return route.run();
+			}
+		},
+
+		/**
 		 * Run the router
 		 * @return Route|undefined
 		 */
@@ -238,12 +250,14 @@
 
 	/**
 	 * Route object
-	 * @param {object} options      Options passed to the route
+	 * @param {string} path
+	 * @param {string} closure
 	 * @param {LightRouter} router  Instance of the light router the route belongs to.
 	 */
-	function Route(options, router)
+	function Route(path, callback, router)
 	{
-		this.options = options;
+		this.path = path;
+		this.callback = callback;
 		this.router = router;
 		this.values = [];
 	}
@@ -257,13 +271,13 @@
 		 */
 		regex: function() {
 
-			var route = this.options.route;
+			var path = this.path;
 
-			if (typeof route === 'string')
+			if (typeof path === 'string')
 			{
-				return new RegExp('^' + route.replace(/\//g, '\\/').replace(this.router.namedParam.match, this.router.namedParam.replace) + '$');
+				return new RegExp('^' + path.replace(/\//g, '\\/').replace(this.router.namedParam.match, this.router.namedParam.replace) + '$');
 			}
-			return route;
+			return path;
 		},
 
 		/**
@@ -272,12 +286,12 @@
 		 */
 		params: function() {
 
-			var obj = {}, name, values = this.values, params = values, i, t = 0, route = this.options.route;
+			var obj = {}, name, values = this.values, params = values, i, t = 0, path = this.path;
 
-			if (typeof route === 'string')
+			if (typeof path === 'string')
 			{
 				t = 1;
-				params = route.match(this.router.namedParam.match);
+				params = path.match(this.router.namedParam.match);
 			}
 			
 			for (i in params)
@@ -309,11 +323,11 @@
 		 * @return {mixed}
 		 */
 		run: function() {
-			if (typeof this.options.callback === 'string')
+			if (typeof this.callback === 'string')
 			{
-				return this.router.handler[this.options.callback](this.params());
+				return this.router.handler[this.callback](this.params());
 			}
-			return this.options.callback.apply(this.router.context, [this.params()]);
+			return this.callback.apply(this.router.context, [this.params()]);
 		}
 	};
 
