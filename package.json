@@ -1,9 +1,9 @@
 {
   "name": "lightrouter",
-  "version": "0.2.1",
+  "version": "0.2.3",
   "description": "Lighweight javascript router",
   "author": "Gary Green",
-  "main": "lightrouter.js",
+  "main": "src/lightrouter.js",
   "scripts": {
     "test": "mocha -b -R tap tests"
   },
