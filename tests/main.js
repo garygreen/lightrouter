@@ -2,7 +2,7 @@
 
 	var assert, LightRouter;
 
-	if (typeof require !== 'undefined')
+	if (typeof exports === 'object')
 	{
 		assert      = require('chai').assert,
 		LightRouter = require('../src/lightrouter.js');

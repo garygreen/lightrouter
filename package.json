@@ -5,16 +5,23 @@
   "author": "Gary Green",
   "main": "lightrouter.js",
   "scripts": {
-    "test": "mocha -b -R tap tests"
+    "test-browser": "karma start --single-run --browsers PhantomJS",
+    "test-node": "mocha -b -R tap tests",
+    "test": "npm run test-node && npm run test-browser"
   },
   "dependencies": {},
   "devDependencies": {
-    "chai": "^1.9.1",
+    "chai": "^3.0.0",
     "gulp": "^3.8.5",
     "gulp-clean": "^0.3.1",
     "gulp-concat": "^2.2.0",
     "gulp-header": "^1.0.5",
     "gulp-uglify": "^0.3.1",
-    "mocha": "^1.20.1"
+    "karma": "^0.12.37",
+    "karma-chai": "^0.1.0",
+    "karma-mocha": "^0.2.0",
+    "karma-phantomjs-launcher": "^0.2.0",
+    "mocha": "^2.2.5",
+    "phantomjs": "^1.9.17"
   }
 }
