@@ -3,7 +3,10 @@
   "version": "0.3.1",
   "description": "Lighweight javascript router",
   "author": "Gary Green",
-  "main": "lightrouter.js",
+  "main": "./src/lightrouter.js",
+  "keywords": [
+    "router", "routing"
+  ],
   "scripts": {
     "test-browser": "karma start --single-run --browsers PhantomJS",
     "test-node": "mocha -b -R tap tests",
