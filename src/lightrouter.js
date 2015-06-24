@@ -13,18 +13,18 @@
  *  limitations under the License.
  */
 
-(function(factory) {
+(function(window, factory) {
 
-	if (typeof exports !== 'undefined')
+	if (typeof exports === 'object')
 	{
-		module.exports = factory();
+		module.exports = factory(window);
 	}
 	else
 	{
 		window.LightRouter = factory(window);
 	}
 
-}(function(window) {
+}(typeof window === 'undefined' ? undefined : window, function(window) {
 
 	function LightRouter(options)
 	{
