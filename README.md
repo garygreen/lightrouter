@@ -106,7 +106,7 @@ Set the object handler for string-based route callbacks.
 ### getUrl([type])
 Get's the url to match routes against (will default to get the url on the default routing type as set in the options or by `setType()` or for the type if supplied.)
 
-## match(route, [string|closure]callback)
+### match(route, [string|closure]callback)
 Attempt to match a one-time route.
 
 ### run()
